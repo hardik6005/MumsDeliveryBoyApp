@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:grocery_delivery_boy/common/models/order_model.dart';
 import 'package:grocery_delivery_boy/helper/price_converter_helper.dart';
 import 'package:grocery_delivery_boy/localization/language_constrants.dart';
@@ -123,7 +124,11 @@ class _DeliveryDialogWidgetState extends State<DeliveryDialogWidget> {
                                           animationDuration: const Duration(milliseconds: 300),
                                           backgroundColor: Colors.transparent,
                                           enableActiveFill: true,
-                                          onChanged: (query) => {if (query.length == 6) {}},
+                                          onChanged: (query)  {
+                                            // if (query.length == 6) {}
+                                            widget.inputPinTextController!.text = query;
+                                            setState(() {});
+                                          },
                                           beforeTextPaste: (text) {
                                             return true;
                                           },
@@ -149,11 +154,16 @@ class _DeliveryDialogWidgetState extends State<DeliveryDialogWidget> {
                                                             token: Provider.of<AuthProvider>(context, listen: false).getUserToken(), orderId: widget.orderModel!.id, status: 'paid');
                                                         Provider.of<OrderProvider>(context, listen: false).getAllOrders();
                                                         Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => OrderDeliveredScreen(orderID: widget.orderModel!.id.toString())));
+                                                      }else{
+                                                        widget.inputPinTextController!.text = "";
+                                                        setState(() {});
                                                       }
                                                     });
 
                                                     setState(() {});
 
+                                                  }else{
+                                                    Fluttertoast.showToast(msg: "Enter OTP");
                                                   }
                                                 }) : Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor)));
                                           },

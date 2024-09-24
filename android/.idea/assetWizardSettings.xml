@@ -81,7 +81,8 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
-                                                <entry key="imagePath" value="$PROJECT_DIR$/../../../Logo_colored _On Bla.png" />
+                                                <entry key="imagePath" value="$PROJECT_DIR$/../assets/image/logo.png" />
+                                                <entry key="scalingPercent" value="91" />
                                                 <entry key="trimmed" value="true" />
                                               </map>
                                             </option>

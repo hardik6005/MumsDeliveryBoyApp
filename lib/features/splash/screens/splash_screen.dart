@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:grocery_delivery_boy/features/auth/providers/auth_provider.dart';
+import 'package:grocery_delivery_boy/features/auth/screens/login_screen.dart';
 import 'package:grocery_delivery_boy/features/dashboard/screens/dashboard_screen.dart';
 import 'package:grocery_delivery_boy/features/language/screens/choose_language_screen.dart';
 import 'package:grocery_delivery_boy/features/maintainance/screens/maintenance_screen.dart';
@@ -69,16 +70,16 @@ class _SplashScreenState extends State<SplashScreen> {
               MaterialPageRoute(builder: (_) => const MaintenanceScreen()));
         } else {
           Timer(const Duration(seconds: 1), () async {
-            if (Provider.of<AuthProvider>(context, listen: false)
-                .isLoggedIn()) {
+            if (Provider.of<AuthProvider>(context, listen: false).isLoggedIn()) {
               Provider.of<AuthProvider>(context, listen: false).updateToken();
               Navigator.pushReplacement(context,
                   MaterialPageRoute(builder: (_) => const DashboardScreen()));
             } else {
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (_) => const ChooseLanguageScreen()));
+              // Navigator.pushReplacement(
+              //     context,
+              //     MaterialPageRoute(
+              //         builder: (_) => const ChooseLanguageScreen()));
+              Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const LoginScreen()));
             }
           });
         }

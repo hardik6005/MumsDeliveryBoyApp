@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -82,6 +83,7 @@ class DioClient {
         onReceiveProgress: onReceiveProgress,
       );
 
+      log("RESPONSE-------${response.data}");
       return response;
     } on FormatException catch (_) {
       throw const FormatException("Unable to process the data");

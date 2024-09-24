@@ -29,12 +29,17 @@ class OrderModel {
   double? _extraDiscount;
   List<OrderImage>? _orderImageList;
   bool? _isGuestOrder;
+  List<OrderPartialPayment> paymentList = [];
+  double dueAmount = 0;
+
 
 
 
   OrderModel(
       {int? id,
         int? userId,
+        List<OrderPartialPayment>? paymentList,
+        double? dueAmount,
         double? orderAmount,
         double? couponDiscountAmount,
         String? couponDiscountTitle,

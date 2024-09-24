@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:grocery_delivery_boy/common/models/order_model.dart';
 import 'package:grocery_delivery_boy/common/providers/tracker_provider.dart';
@@ -57,14 +58,14 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
         }
       }).then((value) {
         Provider.of<OrderProvider>(context, listen: false)
-            .getOrderDetails(orderModel!.id.toString());
+            .getOrderDetails(orderModel!.id.toString(), widget.orderModelItem!);
       });
     } else {
       if (orderModel?.orderType == 'delivery') {
         deliveryCharge = orderModel?.deliveryCharge;
       }
       Provider.of<OrderProvider>(context, listen: false)
-          .getOrderDetails(orderModel!.id.toString());
+          .getOrderDetails(orderModel!.id.toString(), widget.orderModelItem!);
     }
   }
 
@@ -128,17 +129,29 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
               (orderModel?.couponDiscountAmount ?? 0) -
               extraDiscount;
 
-          List<OrderPartialPayment> paymentList = [];
+       /*   List<OrderPartialPayment> paymentList = [];
           double dueAmount = 0;
 
           if (orderModel != null &&
               orderModel?.orderPartialPayments != null &&
               orderModel!.orderPartialPayments!.isNotEmpty) {
-            paymentList.addAll(orderModel!.orderPartialPayments!);
+
+
+            // paymentList.addAll(orderModel!.orderPartialPayments!);
+            OrderPartialPayment paidModel = OrderPartialPayment();
+            double? paidAmount = 0;
+            orderModel!.orderPartialPayments!.asMap().forEach((key, value) {
+              print("VALUE_________${value.paidAmount}");
+              paidAmount = paidAmount! + value.paidAmount!;
+            });
+
+            paidModel = orderModel!.orderPartialPayments!.first;
+            paidModel.paidAmount = paidAmount;
+
+            paymentList.add(paidModel);
 
             if ((orderModel?.orderPartialPayments?.first.dueAmount ?? 0) > 0) {
-              dueAmount =
-                  orderModel?.orderPartialPayments?.first.dueAmount ?? 0;
+              dueAmount = orderModel?.orderPartialPayments?.first.dueAmount ?? 0;
               paymentList.add(OrderPartialPayment(
                 id: -1,
                 paidAmount: 0,
@@ -147,6 +160,8 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
               ));
             }
           }
+
+*/
 
           return order.orderDetails != null && orderModel?.orderAmount != null
               ? Column(
@@ -649,7 +664,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                     horizontal: Dimensions.paddingSizeSmall,
                                     vertical: 1),
                                 child: Column(
-                                    children: paymentList
+                                    children: widget.orderModelItem!.paymentList
                                         .map((payment) => Padding(
                                               padding:
                                                   const EdgeInsets.symmetric(
@@ -824,16 +839,14 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                               listen: false)
                                           .getUserToken();
                                       Provider.of<OrderProvider>(context,
-                                              listen: false)
+                                          listen: false)
                                           .updateOrderStatus(
                                         token: token,
                                         orderId: orderModel?.id,
                                         status: 'out_for_delivery',
                                       );
-                                      Provider.of<OrderProvider>(context,
-                                              listen: false)
-                                          .getAllOrders();
-                                      Navigator.pop(context);
+                                       Provider.of<OrderProvider>(context, listen: false).getAllOrders();
+                                      Navigator.pop(context, true);
                                     });
                                   },
 
@@ -924,8 +937,8 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                               20.0)),
                                                   child: DeliveryDialogWidget(
                                                     onTap: () {},
-                                                    totalPrice: (dueAmount > 0
-                                                        ? dueAmount
+                                                    totalPrice: (widget.orderModelItem!.dueAmount > 0
+                                                        ? widget.orderModelItem!.dueAmount
                                                         : totalPrice),
                                                     orderModel: orderModel,
                                                     inputPinTextController:
@@ -982,10 +995,13 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
 
   Widget otpDialog(BuildContext context, String token, OrderProvider order) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        Image.asset(Images.icOtp),
+        Image.asset(Images.icOtp, height: 70,),
+        SizedBox(height: 20,),
+        const Text("Take OTP from customer for verification"),
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 35),
+          padding: EdgeInsets.symmetric(vertical: 35),
           child: PinCodeTextField(
             controller: inputPinTextController,
             length: 6,
@@ -996,10 +1012,10 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
             animationType: AnimationType.fade,
             pinTheme: PinTheme(
               shape: PinCodeFieldShape.box,
-              fieldHeight: 63,
-              fieldWidth: 52,
+              fieldHeight: 43,
+              fieldWidth: 32,
               borderWidth: 1,
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(5),
               selectedColor: Theme.of(context).primaryColor.withOpacity(.2),
               selectedFillColor: Colors.white,
               inactiveFillColor: Theme.of(context).cardColor,
@@ -1010,7 +1026,11 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
             animationDuration: const Duration(milliseconds: 300),
             backgroundColor: Colors.transparent,
             enableActiveFill: true,
-            onChanged: (query) => {if (query.length == 6) {}},
+            onChanged: (query) {
+              // if (query.length == 6) {}
+              inputPinTextController!.text = query;
+              setState(() {});
+            },
             beforeTextPaste: (text) {
               return true;
             },
@@ -1025,19 +1045,27 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                 if (inputPinTextController.text.length == 6) {
                   isLoading = true;
 
-                  Provider.of<TrackerProvider>(context, listen: false)
-                      .stopLocationService();
+                  Provider.of<TrackerProvider>(context, listen: false).stopLocationService();
                   Provider.of<OrderProvider>(context, listen: false)
                       .updateOrderStatus(
                           token: token,
                           orderId: orderModel?.id,
                           status: 'delivered',
-                          otp: inputPinTextController!.text);
-                  Navigator.of(context).pushReplacement(MaterialPageRoute(
-                      builder: (_) => OrderDeliveredScreen(
-                          orderID: orderModel?.id.toString())));
+                          otp: inputPinTextController!.text).then((value){
+                    if (value.isSuccess) {
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(
+                          builder: (_) =>
+                              OrderDeliveredScreen(
+                                  orderID: orderModel?.id.toString())));
+                    }else{
+                      inputPinTextController!.text = "";
+                      setState(() {});
+                    }
+                  });
 
                   setState(() {});
+                }else{
+                  Fluttertoast.showToast(msg: "Enter OTP");
                 }
               }),
         )

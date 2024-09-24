@@ -42,14 +42,15 @@ class OrderRepo {
 
   Future<ApiResponseModel> updateOrderStatus({String? token, int? orderId, String? status, String? otp}) async {
     try {
-      print("REQUEST:::::-------"+{"token": token, "order_id": orderId, "status": status, "_method": 'put', "order_otp": otp}.toString());
+      // print("REQUEST:::::-------"+{"token": token, "order_id": orderId, "status": status, "_method": 'put', "order_otp": otp}.toString());
       Response response = await dioClient!.post(
         AppConstants.updateOrderStatusUri,
-        data: {"token": token, "order_id": orderId, "status": status, "_method": 'put', "order_otp": otp},
+        data: {"token": token, "order_id": orderId, "status": status, "_method": 'put', "order_otp": otp??""},
       );
+      // print("EWEWEWEWEWEWEWEWEWEWEWWEWE-------${response.data.toString()}");
       return ApiResponseModel.withSuccess(response);
     } catch (e) {
-
+      // print("EWEWEWEWEWEWEWEWE------${e.toString()}");
       Fluttertoast.showToast(
           msg: "Invalid Otp!",
           toastLength: Toast.LENGTH_SHORT,

@@ -14,7 +14,8 @@ import 'package:provider/provider.dart';
 class OrderWidget extends StatelessWidget {
   final OrderModel? orderModel;
   final int index;
-  const OrderWidget({Key? key, this.orderModel, required this.index}) : super(key: key);
+  final Function? onBack;
+  const OrderWidget({Key? key, this.orderModel, required this.index, this.onBack}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -106,7 +107,12 @@ class OrderWidget extends StatelessWidget {
               child: CustomButtonWidget(
                 btnTxt: getTranslated('view_details', context),
                 onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(builder: (_) => OrderDetailsScreen(orderModelItem: orderModel)));
+                  Navigator.of(context).push(MaterialPageRoute(builder: (_) => OrderDetailsScreen(orderModelItem: orderModel))).then((value){
+                    if(value!=null && value){
+                      print("--------GOT_THE_HEREEEE-----------");
+                      onBack!();
+                    }
+                  });
                 },
                 isShowBorder: true,
               ),

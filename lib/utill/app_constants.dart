@@ -6,6 +6,7 @@ class AppConstants {
   static const double appVersion = 7.3;
   static const String fontFamily = 'Rubik';
   static const String baseUrl = 'https://mumscartadmin.xpertprint.in/';
+  // static const String baseUrl = 'https://admin.mumscart.in/';
   static const String profileUri = '/api/v1/delivery-man/profile?token=';
   static const String configUri = '/api/v1/config';
   static const String loginUri = '/api/v1/auth/delivery-man/login';

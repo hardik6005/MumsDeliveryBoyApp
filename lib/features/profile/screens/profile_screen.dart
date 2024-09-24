@@ -71,19 +71,19 @@ class ProfileScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
                   child: Column(
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            getTranslated('theme_style', context),
-                            style: rubikRegular.copyWith(
-                              fontSize: Dimensions.fontSizeLarge,
-                            ),
-                          ),
-
-                          const StatusWidget()
-                        ],
-                      ),
+                      // Row(
+                      //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //   children: [
+                      //     Text(
+                      //       getTranslated('theme_style', context),
+                      //       style: rubikRegular.copyWith(
+                      //         fontSize: Dimensions.fontSizeLarge,
+                      //       ),
+                      //     ),
+                      //
+                      //     const StatusWidget()
+                      //   ],
+                      // ),
                       const SizedBox(height: 20),
 
                       UserInfoWidget(text: profileProvider.userInfoModel?.fName),

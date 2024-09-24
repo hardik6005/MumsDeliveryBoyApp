@@ -50,33 +50,33 @@ class HomeScreen extends StatelessWidget {
                   });
             },
           ),
-          PopupMenuButton<String>(
-            onSelected: (value) {
-              switch (value) {
-                case 'language':
-                  Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ChooseLanguageScreen(fromHomeScreen: true)));
-              }
-            },
-            icon: Icon(
-              Icons.more_vert_outlined,
-              color: Theme.of(context).textTheme.bodyLarge!.color,
-            ),
-            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-              PopupMenuItem<String>(
-                value: 'language',
-                child: Row(
-                  children: [
-                    Icon(Icons.language, color: Theme.of(context).textTheme.bodyLarge!.color),
-                    const SizedBox(width: Dimensions.paddingSizeLarge),
-                    Text(
-                      getTranslated('change_language', context),
-                      style: rubikRegular.copyWith(color: Theme.of(context).textTheme.bodyLarge!.color),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          )
+          // PopupMenuButton<String>(
+          //   onSelected: (value) {
+          //     switch (value) {
+          //       case 'language':
+          //         Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ChooseLanguageScreen(fromHomeScreen: true)));
+          //     }
+          //   },
+          //   icon: Icon(
+          //     Icons.more_vert_outlined,
+          //     color: Theme.of(context).textTheme.bodyLarge!.color,
+          //   ),
+          //   itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+          //     PopupMenuItem<String>(
+          //       value: 'language',
+          //       child: Row(
+          //         children: [
+          //           Icon(Icons.language, color: Theme.of(context).textTheme.bodyLarge!.color),
+          //           const SizedBox(width: Dimensions.paddingSizeLarge),
+          //           Text(
+          //             getTranslated('change_language', context),
+          //             style: rubikRegular.copyWith(color: Theme.of(context).textTheme.bodyLarge!.color),
+          //           ),
+          //         ],
+          //       ),
+          //     ),
+          //   ],
+          // )
         ],
         leading: const SizedBox.shrink(),
         title: Consumer<ProfileProvider>(builder: (context, profileProvider, child) {
@@ -131,6 +131,9 @@ class HomeScreen extends StatelessWidget {
                 itemBuilder: (context, index) => OrderWidget(
                   orderModel: orderProvider.currentOrders?[index],
                   index: index,
+                  onBack: (){
+                    Provider.of<OrderProvider>(context, listen: false).getAllOrders();
+                  },
                 ),
               ) : Center(child: Text(getTranslated('no_order_found', context),style: rubikRegular)),
             )),

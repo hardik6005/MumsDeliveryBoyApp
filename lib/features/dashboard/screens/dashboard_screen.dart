@@ -26,7 +26,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     _screens = [
       HomeScreen(),
-      OrderHistoryScreen(),
+      // OrderHistoryScreen(),
       const ProfileScreen(),
     ];
   }
@@ -52,7 +52,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           type: BottomNavigationBarType.fixed,
           items: [
             _barItem(Icons.home, getTranslated('home', context), 0),
-            _barItem(Icons.history, getTranslated('order_history', context), 1),
+            // _barItem(Icons.history, getTranslated('order_history', context), 1),
             _barItem(Icons.person, getTranslated('profile', context), 2),
           ],
           onTap: (int index) {

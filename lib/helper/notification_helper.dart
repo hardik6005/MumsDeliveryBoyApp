@@ -43,7 +43,7 @@ class NotificationHelper {
         id = int.tryParse('${message.data['order_id']}');
         Provider.of<ChatProvider>(Get.context!, listen: false).getChatMessages(id);
       }else if(message.data['order_id'] != null){
-        Provider.of<OrderProvider>(Get.context!, listen: false).getOrderDetails(message.data['order_id']);
+        Provider.of<OrderProvider>(Get.context!, listen: false).getOrderDetails(message.data['order_id'], OrderModel());
       }
       showNotification(message, flutterLocalNotificationsPlugin, false);
 

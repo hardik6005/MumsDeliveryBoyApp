@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:grocery_delivery_boy/common/models/api_response_model.dart';
@@ -31,6 +32,7 @@ class OrderProvider with ChangeNotifier {
   List<OrderModel>? get allOrderHistory => _allOrderHistory;
 
 
+
   Future getAllOrders() async {
     ApiResponseModel apiResponse = await orderRepo.getAllOrders();
     if (apiResponse.response?.statusCode == 200) {
@@ -40,11 +42,52 @@ class OrderProvider with ChangeNotifier {
       apiResponse.response?.data.forEach((order) {
         OrderModel orderModel = OrderModel.fromJson(order);
         if(orderModel.orderStatus == 'processing' || orderModel.orderStatus == 'out_for_delivery') {
+
+          List<OrderPartialPayment> paymentListOl = [];
+          double dueAmountOl = 0;
+
+          if (orderModel != null &&
+              orderModel!.orderPartialPayments != null &&
+              orderModel!.orderPartialPayments!.isNotEmpty) {
+
+
+            // paymentList.addAll(orderModel!.orderPartialPayments!);
+            OrderPartialPayment paidModel = OrderPartialPayment();
+            double? paidAmount = 0;
+            orderModel!.orderPartialPayments!.asMap().forEach((key, value) {
+              print("VALUE_________${value.paidAmount}");
+              paidAmount = paidAmount! + value.paidAmount!;
+            });
+
+            paidModel = orderModel!.orderPartialPayments!.first;
+            paidModel.paidAmount = paidAmount;
+
+            paymentListOl.add(paidModel);
+
+            if ((orderModel?.orderPartialPayments?.first.dueAmount ?? 0) > 0) {
+              dueAmountOl = orderModel?.orderPartialPayments?.first.dueAmount ?? 0;
+              paymentListOl.add(OrderPartialPayment(
+                id: -1,
+                paidAmount: 0,
+                paidWith: orderModel?.paymentMethod,
+                dueAmount: orderModel?.orderPartialPayments?.first.dueAmount,
+              ));
+            }
+          }
+
+          orderModel.paymentList = paymentListOl;
+          orderModel.dueAmount = dueAmountOl;
+
+
           _currentOrdersReverse?.add(orderModel);
         }
       });
 
       _currentOrders = List.from(_currentOrdersReverse!.reversed);
+
+
+
+
 
     } else {
       ApiCheckerHelper.checkApi(apiResponse);
@@ -55,7 +98,7 @@ class OrderProvider with ChangeNotifier {
 
 
 
-  Future<List<OrderDetailsModel>?> getOrderDetails(String orderID) async {
+  Future<List<OrderDetailsModel>?> getOrderDetails(String orderID, OrderModel orderModelItem) async {
     _orderDetails = null;
 
     ApiResponseModel apiResponse = await orderRepo.getOrderDetails(orderID: orderID);
@@ -68,6 +111,7 @@ class OrderProvider with ChangeNotifier {
       ApiCheckerHelper.checkApi( apiResponse);
 
     }
+
 
     notifyListeners();
 
