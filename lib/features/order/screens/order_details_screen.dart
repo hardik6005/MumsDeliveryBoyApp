@@ -123,11 +123,11 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
             }
           }
           double subTotal = itemsPrice + (isVatInclude! ? 0 : tax);
-          double totalPrice = subTotal -
+          double totalPrice = (subTotal -
               discount +
               deliveryCharge! -
               (orderModel?.couponDiscountAmount ?? 0) -
-              extraDiscount;
+              extraDiscount).roundToDouble();
 
        /*   List<OrderPartialPayment> paymentList = [];
           double dueAmount = 0;
@@ -692,12 +692,9 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                     PriceConverterHelper
                                                         .convertPrice(
                                                             context,
-                                                            payment.paidAmount! >
-                                                                    0
-                                                                ? payment
-                                                                    .paidAmount
-                                                                : payment
-                                                                    .dueAmount),
+                                                            payment.paidAmount! > 0
+                                                                ? payment.paidAmount!.roundToDouble()
+                                                                : payment.dueAmount!.roundToDouble()),
                                                     style: rubikRegular.copyWith(
                                                         fontSize: Dimensions
                                                             .fontSizeDefault,
@@ -939,7 +936,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                     onTap: () {},
                                                     totalPrice: (widget.orderModelItem!.dueAmount > 0
                                                         ? widget.orderModelItem!.dueAmount
-                                                        : totalPrice),
+                                                        : totalPrice).roundToDouble(),
                                                     orderModel: orderModel,
                                                     inputPinTextController:
                                                         inputPinTextController,
